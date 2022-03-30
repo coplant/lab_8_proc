@@ -1,29 +1,30 @@
 #include "Header.h"
 
-void Init_Container(Container* Head, Container* Tail) {
+Container::Container() {
+    Head = Tail = new Node();
     Head->Cont = Tail->Cont = NULL;
-    Head->Next = Tail->Next = NULL; 
+    Head->Next = Tail->Next = NULL;
     Head->Prev = Tail->Prev = NULL;
-    Head->Len = Tail->Len = 0;
+    Len = 0;
 }
 
-void In_Container(Container* Head, Container* Tail, ifstream& ifst) {
-    Container* Temp;
-    int Len = 0; 
+void Container::In(ifstream& ifst) {
+    Node* Temp;
 
     while (!ifst.eof()) {
-        Temp = new Container(); 
+        Temp = new Node(); 
         Temp->Next = NULL;
         Temp->Prev = NULL;
+
         
-        if (!Len) {
-            if ((Head->Cont = In_Car(ifst))) {
+        if (!Len) { 
+            if ((Head->Cont = Car::In_Car(ifst))) {
                 Tail = Head;
                 Len++;
             }
         }
-        else {
-            if ((Temp->Cont = In_Car(ifst))) {
+        else { 
+            if ((Temp->Cont = Car::In_Car(ifst))) {
                 Tail->Next = Temp;
                 Temp->Prev = Tail;
                 Tail = Temp;
@@ -31,27 +32,19 @@ void In_Container(Container* Head, Container* Tail, ifstream& ifst) {
             }
         }
     }
-
- 
-    for (int i = 0; i < Len; i++) {
-        Head->Len = Len;
-        if (Head->Next) {
-            Head = Head->Next;
-        }
-    }
 }
 
-void Out_Container(Container* Head, ofstream& ofst) {
-    ofst << "Container contains " << Head->Len
+void Container:: Out(ofstream& ofst) {
+    ofst << "Container contains " << Len
         << " elements." << endl << endl;
 
-    Container* Temp = Head;
+    Node* Temp = Head;
 
-    for (int i = 0; i < Head->Len; i++) {
+    for (int i = 0; i < Len; i++) {
         ofst << i << ": ";
-        Out_Car(Temp->Cont, ofst);
+        Temp->Cont->Out_Data(Temp->Cont->Get_Motor_power(), Temp->Cont->Get_Fuel(), ofst);
 
-        ofst << "Load to capacity ratio is = " << Load_to_capacity_ratio(Temp->Cont) << endl << endl;
+        ofst << "Load to capacity ratio is = " << Temp->Cont->Load_to_capacity_ratio(Temp->Cont->Get_Motor_power()) << endl << endl;
 
         if (Temp->Next) {
             Temp = Temp->Next;
@@ -59,13 +52,12 @@ void Out_Container(Container* Head, ofstream& ofst) {
     }
 }
 
-void Clear_Container(Container* Head, Container* Tail) {
-    Container* Temp = Head;
-    
-    for (int i = 0; i < Head->Len; i++) {
+void Container::Clear() {
+    Node* Temp = Head;
+
+    for (int i = 0; i < Len; i++) {
         free(Temp->Cont);
-        Temp->Len = 0;
-        
+
         if (Temp->Next) {
             Temp = Temp->Next;
             free(Temp->Prev);
@@ -73,23 +65,18 @@ void Clear_Container(Container* Head, Container* Tail) {
 
     }
 
-    Head->Len = 0;
+    Len = 0;
 }
 
-bool Compare(Container* First, Container* Second) {
-    return Load_to_capacity_ratio(First->Cont) > Load_to_capacity_ratio(Second->Cont);
-}
+void Container::Sort() {
+    if (Len > 1) {
+        Node* First = Head;
+        Node* Second = Head->Next;
+        Node* Temp = new Node;
 
-void Sort(Container* Head) {
-    if (Head->Len > 1) {
-        Container* First = Head;
-        Container* Second = Head->Next;
-
-        Container* Temp = new Container;
-
-        for (int i = 0; i < Head->Len - 1; i++) {
-            for (int j = 0; j < Head->Len - i - 1; j++) {
-                if (Compare(First, Second)) {
+        for (int i = 0; i < Len - 1; i++) {
+            for (int j = 0; j < Len - i - 1; j++) {
+                if (First->Cont->Compare(Second->Cont)) {
                     Temp->Cont = First->Cont;
                     First->Cont = Second->Cont;
                     Second->Cont = Temp->Cont;
@@ -104,91 +91,107 @@ void Sort(Container* Head) {
     }
 }
 
-Car* In_Car(ifstream& ifst) {
-    Car* C; 
+void Container::Out_Only_Truck(ofstream& ofst) {
+    ofst << "Only Trucks." << endl << endl;
+
+    Node* Temp = Head;
+
+    for (int i = 0; i < Len; i++) {
+        ofst << i << ": ";
+        Temp->Cont->Out_Only_Truck(Temp->Cont->Get_Motor_power(), Temp->Cont->Get_Fuel(), ofst);
+
+        if (Temp->Next) {
+            Temp = Temp->Next;
+        }
+    }
+}
+
+Car* Car::In_Car(ifstream& ifst) {
+    Car* C;
     int K;
 
-    ifst >> K; 
-
+    ifst >> K;
+    
     if (K == 1) {
-       
-        C = (Car*)In_Truck(ifst); 
-
-        C->K = TRUCK; 
-
-        return C;
+        C = new Truck;
     }
     else if (K == 2) {
-        C = (Car*)In_Bus(ifst); 
-
-        C->K = BUS; 
-
-        return C;
+        C = new Bus;
+    }
+    else if (K == 3) {
+        C = new Passenger_car;
     }
     else {
         return 0;
     }
+
+    ifst >> C->Motor_power; 
+
+    C->In_Data(ifst);
+
+    ifst >> C->Fuel; 
+
+    return C;
 }
 
-void Out_Car(Car* C, ofstream& ofst) {
-    if (C->K == TRUCK) {
-        Out_Truck((Truck*)C, ofst);
-    }
-    else if (C->K == BUS) {
-        Out_Bus((Bus*)C, ofst); 
-    }
-    else {
-        ofst << "Incorrect element!" << endl;
-    }
+int Car::Get_Motor_power() {
+    return Motor_power;
 }
 
-double Load_to_capacity_ratio(Car* C) {
-    if (C->K == TRUCK)
-    {
-        return Load_to_capacity_ratio_Truck((Truck*)C); 
-    }
-    else if (C->K == BUS)
-    {//Подсчет отношения груза к мощности автобуса
-    }
-    else
-    {
-        return -1;
-    }
+double Car::Get_Fuel() {
+    return Fuel;
 }
 
-Truck* In_Truck(ifstream& ifst) {
-    Truck* T = new Truck();
-
-    ifst >> T->Motor_power;
-    ifst >> T->Load_cap;
-
-    return T;
+bool Car::Compare(Car* Other) {
+    return Load_to_capacity_ratio(Motor_power) > Other->Load_to_capacity_ratio(Other->Get_Motor_power());
 }
 
-
-void Out_Truck(Truck* T, ofstream& ofst) {
-    ofst << "Truck with motor power = " << T->Motor_power<< endl;
-    ofst << "Load capacity is " << T->Load_cap << endl;
+void Car::Out_Only_Truck(int Motor_power, double Fuel, ofstream& ofst) {
+    ofst << endl;
 }
 
-double Load_to_capacity_ratio_Truck(Truck* T) {
-    return (double)T->Load_cap / (double)T->Motor_power;
+void Truck::In_Data(ifstream& ifst) {
+    ifst >> Load_cap;
 }
 
-Bus* In_Bus(ifstream& ifst) {
-    Bus* B = new Bus();
-
-    ifst >> B->Motor_power;
-    ifst >> B->Passenger_cap;
-
-    return B;
+void Truck::Out_Data(int Motor_power, double Fuel, ofstream& ofst) {
+    ofst << "It's a Truck with motor power = " << Motor_power << endl;
+    ofst << "Its load capacity is " << Load_cap << endl;
+    ofst << "Its fuel is " << Fuel << endl;
 }
 
-void Out_Bus(Bus* B, ofstream& ofst) {
-    ofst << "Bus with motor power = " << B->Motor_power << endl;
-    ofst << "Passenger capacity is " << B->Passenger_cap << endl;
+double Truck::Load_to_capacity_ratio(int Motor_power) {
+    return (double)Load_cap / (double)Motor_power;
 }
 
-double Load_to_capacity_ratio_Bus(Bus* B) {
-    return (double)(75 * B->Passenger_cap) / (double)B->Motor_power;
+void Truck::Out_Only_Truck(int Motor_power, double Fuel, ofstream& ofst) {
+    Out_Data(Motor_power, Fuel, ofst);
+}
+
+void Bus::In_Data(ifstream& ifst) {
+    ifst >> Passenger_cap;
+}
+
+void Bus::Out_Data(int Motor_power, double Fuel, ofstream& ofst) {
+    ofst << "It's a Bus with motor power = " << Motor_power << endl;
+    ofst << "Its passenger capacity is " << Passenger_cap << endl;
+    ofst << "Its fuel is " << Fuel << endl;
+}
+
+double Bus::Load_to_capacity_ratio(int Motor_power) {
+    return (double)(75 * Passenger_cap) / (double)Motor_power;
+}
+
+void Passenger_car::In_Data(ifstream& ifst) {
+    ifst >> Max_speed;
+}
+
+void Passenger_car::Out_Data(int Motor_power, double Fuel, ofstream& ofst) {
+    ofst << "It's a Passenger car with motor power = " << Motor_power << endl;
+    ofst << "Its Max speed is " << Max_speed << endl;
+    ofst << "Its fuel is " << Fuel << endl;
+}
+
+double Passenger_car::Load_to_capacity_ratio(int Motor_power) {
+    return (double)(75 * 4) / (double)Motor_power; 
 }
