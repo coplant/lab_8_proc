@@ -13,7 +13,7 @@ enum Key {
 
 
 struct Car {
-    Key K; 
+    Key K;
 };
 
 
@@ -27,6 +27,7 @@ struct Truck {
     Key K; 
     int Motor_power; 
     int Load_cap; 
+    double Fuel; 
 };
 
 
@@ -38,8 +39,9 @@ void Out_Truck(Truck* T, ofstream& ofst);
 
 struct Bus {
     Key K; 
-    int Motor_power; 
+    int Motor_power;                       
     short int Passenger_cap; 
+    double Fuel; 
 };
 
 
@@ -55,7 +57,6 @@ struct Container {
     Container* Prev; 
     Container* Next; 
 };
-
 
 void Init_Container(Container* Head, Container* Tail);
 
