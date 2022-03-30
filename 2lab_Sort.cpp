@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+
 #include "Header.h"
 
 using namespace std;
@@ -14,7 +15,7 @@ int main(int argc, char* argv[]) {
     ifstream ifst(argv[1]);
 
     ofstream ofst(argv[2]);
-    
+
     cout << "Start" << endl;
 
     Container* Head = new Container(); 
@@ -24,7 +25,9 @@ int main(int argc, char* argv[]) {
 
     In_Container(Head, Tail, ifst); 
 
-    ofst << "Filled container. " << endl;
+    ofst << "Filled and sorted container. " << endl;
+
+    Sort(Head); 
 
     Out_Container(Head, ofst); 
 

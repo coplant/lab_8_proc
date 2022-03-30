@@ -23,6 +23,9 @@ Car* In_Car(ifstream& ifst);
 void Out_Car(Car* C, ofstream& ofst);
 
 
+double Load_to_capacity_ratio(Car* C);
+
+
 struct Truck {
     Key K; 
     int Motor_power; 
@@ -36,9 +39,12 @@ Truck* In_Truck(ifstream& ifst);
 void Out_Truck(Truck* T, ofstream& ofst);
 
 
+double Load_to_capacity_ratio_Truck(Truck* T);
+
+
 struct Bus {
     Key K; 
-    int Motor_power; 
+    int Motor_power;
     short int Passenger_cap; 
 };
 
@@ -47,6 +53,9 @@ Bus* In_Bus(ifstream& ifst);
 
 
 void Out_Bus(Bus* B, ofstream& ofst);
+
+
+double Load_to_capacity_ratio_Bus(Bus* B);
 
 
 struct Container {
@@ -67,5 +76,11 @@ void Out_Container(Container* Head, ofstream& ofst);
 
 
 void Clear_Container(Container* Head, Container* Tail);
+
+
+bool Compare(Container* First, Container* Second);
+
+
+void Sort(Container* Head);
 
 #endif //CONTAINER_H
