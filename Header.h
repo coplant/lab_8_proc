@@ -8,7 +8,8 @@ using namespace std;
 
 enum Key {
     TRUCK, 
-    BUS 
+    BUS, 
+    PASSENGER_CAR 
 };
 
 
@@ -49,6 +50,19 @@ Bus* In_Bus(ifstream& ifst);
 void Out_Bus(Bus* B, ofstream& ofst);
 
 
+struct Passenger_car {
+    Key K; 
+    int Motor_power; 
+    short int Max_speed; 
+};
+
+
+Passenger_car* In_Passenger_car(ifstream& ifst);
+
+
+void Out_Passenger_car(Passenger_car* P_c, ofstream& ofst);
+
+
 struct Container {
     int Len; 
     Car* Cont; 
@@ -62,9 +76,7 @@ void Init_Container(Container* Head, Container* Tail);
 
 void In_Container(Container* Head, Container* Tail, ifstream& ifst);
 
-
 void Out_Container(Container* Head, ofstream& ofst);
-
 
 void Clear_Container(Container* Head, Container* Tail);
 

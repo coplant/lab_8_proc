@@ -6,13 +6,16 @@ void Init_Container(Container* Head, Container* Tail) {
     Head->Prev = Tail->Prev = NULL;
     Head->Len = Tail->Len = 0;
 }
+
 void In_Container(Container* Head, Container* Tail, ifstream& ifst) {
     Container* Temp;
     int Len = 0; 
+
     while (!ifst.eof()) {
         Temp = new Container(); 
         Temp->Next = NULL;
-        Temp->Prev = NULL;        
+        Temp->Prev = NULL;
+        
         if (!Len) {
             if ((Head->Cont = In_Car(ifst))) {
                 Tail = Head;
@@ -27,7 +30,9 @@ void In_Container(Container* Head, Container* Tail, ifstream& ifst) {
                 Len++;
             }
         }
-    }    
+    }
+
+    
     for (int i = 0; i < Len; i++) {
         Head->Len = Len;
         if (Head->Next) {
@@ -39,10 +44,13 @@ void In_Container(Container* Head, Container* Tail, ifstream& ifst) {
 void Out_Container(Container* Head, ofstream& ofst) {
     ofst << "Container contains " << Head->Len
         << " elements." << endl << endl;
+
     Container* Temp = Head; 
+
     for (int i = 0; i < Head->Len; i++) {
         ofst << i << ": ";
         Out_Car(Temp->Cont, ofst);
+
         if (Temp->Next) {
             Temp = Temp->Next;
         }
@@ -54,27 +62,43 @@ void Clear_Container(Container* Head, Container* Tail) {
     
     for (int i = 0; i < Head->Len; i++) {
         free(Temp->Cont);
-        Temp->Len = 0;        
+        Temp->Len = 0;
+        
         if (Temp->Next) {
             Temp = Temp->Next;
             free(Temp->Prev);
         }
+
     }
+
     Head->Len = 0;
 }
 
 Car* In_Car(ifstream& ifst) {
     Car* C; 
     int K;
+
     ifst >> K; 
-    if (K == 1) {       
+
+    if (K == 1) {
         C = (Car*)In_Truck(ifst); 
+
         C->K = TRUCK;
+
         return C;
     }
     else if (K == 2) {
-        C = (Car*)In_Bus(ifst); 
+        C = (Car*)In_Bus(ifst);
+
         C->K = BUS; 
+
+        return C;
+    }
+    else if (K == 3) {
+        C = (Car*)In_Passenger_car(ifst); 
+
+        C->K = PASSENGER_CAR; 
+
         return C;
     }
     else {
@@ -89,6 +113,9 @@ void Out_Car(Car* C, ofstream& ofst) {
     else if (C->K == BUS) {
         Out_Bus((Bus*)C, ofst); 
     }
+    else if (C->K == PASSENGER_CAR) {
+        Out_Passenger_car((Passenger_car*)C, ofst);
+    }
     else {
         ofst << "Incorrect element!" << endl;
     }
@@ -96,6 +123,7 @@ void Out_Car(Car* C, ofstream& ofst) {
 
 Truck* In_Truck(ifstream& ifst) {
     Truck* T = new Truck();
+
     ifst >> T->Motor_power;
     ifst >> T->Load_cap;
 
@@ -104,17 +132,34 @@ Truck* In_Truck(ifstream& ifst) {
 
 
 void Out_Truck(Truck* T, ofstream& ofst) {
-    ofst << "It's a Truck with motor power = " << T->Motor_power<< endl;
-    ofst << "Its load capacity is " << T->Load_cap << endl << endl;
+    ofst << "Truck with motor power = " << T->Motor_power<< endl;
+    ofst << "Load capacity is " << T->Load_cap << endl << endl;
 }
 
 Bus* In_Bus(ifstream& ifst) {
     Bus* B = new Bus();
+
     ifst >> B->Motor_power;
     ifst >> B->Passenger_cap;
+
     return B;
 }
+
 void Out_Bus(Bus* B, ofstream& ofst) {
-    ofst << "It's a Bus with motor power = " << B->Motor_power << endl;
-    ofst << "Its passenger capacity is " << B->Passenger_cap << endl << endl;
+    ofst << "Bus with motor power = " << B->Motor_power << endl;
+    ofst << "Passenger capacity is " << B->Passenger_cap << endl << endl;
+}
+
+Passenger_car* In_Passenger_car(ifstream& ifst) {
+    Passenger_car* P_c = new Passenger_car();
+
+    ifst >> P_c->Motor_power;
+    ifst >> P_c->Max_speed;
+
+    return P_c;
+}
+
+void Out_Passenger_car(Passenger_car* P_c, ofstream& ofst) {
+    ofst << "Passenger car with motor power = " << P_c->Motor_power << endl;
+    ofst << "Max speed is " << P_c->Max_speed << endl << endl;
 }
