@@ -1,80 +1,97 @@
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef CONTAINER_H
+#define CONTAINER_H
 
 #include <fstream>
-#include <iostream>
-#include <string>
 
 using namespace std;
 
-class Car {
+
+enum Key {
+    TRUCK, 
+    BUS, 
+    PASSENGER_CAR 
+};
+
+
+struct Car {
+    Key K; 
+};
+
+
+Car* In_Car(ifstream& ifst);
+
+
+void Out_Car(Car* C, ofstream& ofst);
+
+
+double Load_to_capacity_ratio(Car* C);
+
+
+struct Truck {
+    Key K; 
     int Motor_power; 
-    double Fuel; 
-public:
-    int Get_Motor_power();
-    double Get_Fuel();
-
-    static Car* In_Car(ifstream& ifst); 
-    virtual void In_Data(ifstream& ifst) = 0; 
-                                              
-                                              
-    virtual void Out_Data(int Motor_power, double Fuel, ofstream& ofst) = 0; 
-    virtual double Load_to_capacity_ratio(int Motor_power) = 0; 
-    bool Compare(Car* Other); 
-    virtual void Out_Only_Truck(int Motor_power, double Fuel, ofstream& ofst);
-protected:
-    Car() {};
-};
-
-
-class Truck : public Car {
     int Load_cap; 
-public:
-    void In_Data(ifstream& ifst); 
-    void Out_Data(int Motor_power, double Fuel, ofstream& ofst); 
-    double Load_to_capacity_ratio(int Motor_power); 
-    void Out_Only_Truck(int Motor_power, double Fuel, ofstream& ofst); 
-    Truck() {};
+    double Fuel; 
 };
 
 
-class Bus : public Car {
-    short int Passenger_cap;
-public:
-    void In_Data(ifstream& ifst); 
-    void Out_Data(int Motor_power, double Fuel, ofstream& ofst); 
-    double Load_to_capacity_ratio(int Motor_power); 
-    Bus() {};
+Truck* In_Truck(ifstream& ifst);
+
+
+double Load_to_capacity_ratio_Truck(Truck* T);
+
+
+struct Bus {
+    Key K; 
+    int Motor_power; 
+    short int Passenger_cap; 
+    double Fuel; 
 };
 
 
-class Passenger_car : public Car {
+Bus* In_Bus(ifstream& ifst);
+
+
+void Out_Bus(Bus* B, ofstream& ofst);
+
+
+double Load_to_capacity_ratio_Bus(Bus* B);
+
+
+struct Passenger_car {
+    Key K; 
+    int Motor_power; 
     short int Max_speed; 
-public:
-    void In_Data(ifstream& ifst); 
-    void Out_Data(int Motor_power, double Fuel, ofstream& ofst);
-    double Load_to_capacity_ratio(int Motor_power); 
-    Passenger_car() {};
+    double Fuel; 
 };
 
 
-struct Node {
-    Node* Next, * Prev; 
-    Car* Cont; 
-};
+Passenger_car* In_Passenger_car(ifstream& ifst);
 
 
-class Container {
-    Node* Head, *Tail; 
+void Out_Passenger_car(Passenger_car* P_c, ofstream& ofst);
+
+
+double Load_to_capacity_ratio_Passenger_car(Passenger_car* P_c);
+
+
+struct Container {
     int Len; 
-public:
-    void In(ifstream& ifst); 
-    void Out(ofstream& ofst); 
-    void Clear(); 
-    void Sort(); 
-    void Out_Only_Truck(ofstream& ofst); 
-    Container(); 
-    ~Container() { Clear(); }
+    Car* Cont; 
+    Container* Prev; 
+    Container* Next; 
 };
 
-#endif //HEADER_H
+void Init_Container(Container* Head, Container* Tail);
+
+void In_Container(Container* Head, Container* Tail, ifstream& ifst);
+
+void Out_Container(Container* Head, ofstream& ofst);
+
+void Clear_Container(Container* Head, Container* Tail);
+
+bool Compare(Container* First, Container* Second);
+
+void Sort(Container* Head);
+
+#endif //CONTAINER_H
