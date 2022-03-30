@@ -17,5 +17,13 @@ Load to capacity ratio is = 18.3871
 Passenger capacity is 1500
 Load to capacity ratio is = 1250
 
+Only Trucks.
+
+0: It's a Truck with motor power = 50
+Its load capacity is 800
+
+1: It's a Truck with motor power = 150
+Its load capacity is 464
+
 Empty container. 
 Container contains 0 elements.

@@ -38,6 +38,9 @@ struct Truck {
 Truck* In_Truck(ifstream& ifst);
 
 
+void Out_Truck(Truck* T, ofstream& ofst);
+
+
 double Load_to_capacity_ratio_Truck(Truck* T);
 
 
@@ -93,5 +96,7 @@ void Clear_Container(Container* Head, Container* Tail);
 bool Compare(Container* First, Container* Second);
 
 void Sort(Container* Head);
+
+void Out_Only_Truck(Container* Head, ofstream& ofst);
 
 #endif //CONTAINER_H
