@@ -1,0 +1,18 @@
+Filled container. 
+Container contains 4 elements.
+
+0: It's a Truck with motor power = 50
+Its load capacity is 800
+
+1: It's a Truck with motor power = 150
+Its load capacity is 464
+
+2: It's a Bus with motor power = 155
+Its passenger capacity is 38
+
+3: It's a Bus with motor power = 90
+Its passenger capacity is 1500
+
+Empty container. 
+Container contains 0 elements.
+
