@@ -29,7 +29,6 @@ struct Truck {
     int Load_cap; 
 };
 
-
 Truck* In_Truck(ifstream& ifst);
 
 
@@ -65,7 +64,8 @@ void In_Container(Container* Head, Container* Tail, ifstream& ifst);
 
 void Out_Container(Container* Head, ofstream& ofst);
 
-
 void Clear_Container(Container* Head, Container* Tail);
+
+void Out_Only_Truck(Container* Head, ofstream& ofst);
 
 #endif //CONTAINER_H
