@@ -1,5 +1,7 @@
 #include "Header.h"
 
+#include <string>
+
 void Init_Container(Container* Head, Container* Tail) {
     Head->Cont = Tail->Cont = NULL;
     Head->Next = Tail->Next = NULL; 
@@ -123,35 +125,41 @@ void Out_Only_Truck(Container* Head, ofstream& ofst) {
 
 Car* In_Car(ifstream& ifst) {
     Car* C; //Создаем указатель на машину
-    int K;
+    string Temp_Str = "";
 
-    ifst >> K; //Считываем идентификатор 
+    getline(ifst, Temp_Str);
+
+    //Проверка того, что файл либо содержит ошибочный идентификтор Машины,
+    //либо не содержит его вовсе
+    if ((Temp_Str != "1") && (Temp_Str != "2") && (Temp_Str != "3")) {
+        //Возможно идентификатора нет, потому что это конец файл
+        if (ifst.peek() == EOF) {
+            return 0;
+        }
+        else { //В ином случае идентификатор отсутствует вовсе, либо он ошибочен
+            //Завершение программы с ошибкой
+            cout << "Input data is incomplete or incorrect!";
+            exit(1);
+        }
+    }
+
+    int K = atoi(Temp_Str.c_str());
 
     if (K == 1) {
        
         C = (Car*)In_Truck(ifst); //Считываем информацию о грузовике
-
-        C->K = TRUCK; //Записываем тип машины
-
-        return C;
     }
     else if (K == 2) {
         C = (Car*)In_Bus(ifst); //Считываем информацию об автобусе
-
-        C->K = BUS; //Записываем тип машины
-
-        return C;
     }
     else if (K == 3) {
         C = (Car*)In_Passenger_car(ifst); //Считываем информацию о легковом автомобиле
-
-        C->K = PASSENGER_CAR; //Записываем тип машины
-
-        return C;
     }
     else {
         return 0;
     }
+
+    return C;
 }
 
 void Out_Car(Car* C, ofstream& ofst) {
@@ -186,10 +194,94 @@ double Load_to_capacity_ratio(Car* C) {
 
 Truck* In_Truck(ifstream& ifst) {
     Truck* T = new Truck();
+    string Temp_Str = "";
+    string Alph_num = "0123456789";
 
-    ifst >> T->Motor_power;
-    ifst >> T->Load_cap;
-    ifst >> T->Fuel;
+    getline(ifst, Temp_Str);
+
+    if (Temp_Str == "") { //Если строка пустая
+        //Завершение программы с ошибкой
+        cout << "Input data is incomplete!";
+        exit(1);
+    }
+
+    if (Temp_Str[0] == '0') { //Если число начинается с 0
+        //Завершение программы с ошибкой
+        cout << "Input data is incorrect!";
+        exit(1);
+    }
+
+    //Цикл проверки того, что строка содержит только цифры
+    for (int i = 0; i < Temp_Str.length(); i++) {
+        if (Alph_num.find(Temp_Str[i]) == -1) {
+            //Завершение программы с ошибкой
+            cout << "Input data is incorrect!";
+            exit(1);
+        }
+    }
+
+    T->Motor_power = atoi(Temp_Str.c_str());
+
+    getline(ifst, Temp_Str);
+
+    if (Temp_Str == "") { //Если строка пустая
+        //Завершение программы с ошибкой
+        cout << "Input data is incomplete!";
+        exit(1);
+    }
+
+    if (Temp_Str[0] == '0') { //Если число начинается с 0
+        //Завершение программы с ошибкой
+        cout << "Input data is incorrect!";
+        exit(1);
+    }
+
+    //Цикл проверки того, что строка содержит только цифры
+    for (int i = 0; i < Temp_Str.length(); i++) {
+        if (Alph_num.find(Temp_Str[i]) == -1) {
+            //Завершение программы с ошибкой
+            cout << "Input data is incorrect!";
+            exit(1);
+        }
+    }
+
+    T->Load_cap = atoi(Temp_Str.c_str());
+
+    getline(ifst, Temp_Str);
+
+    if (Temp_Str == "") { //Если строка пустая
+        //Завершение программы с ошибкой
+        cout << "Input data is incomplete!";
+        exit(1);
+    }
+
+    //Проверка того, что строка не начианется с 0, точки или запятой, а также не заканчивается точкой или запятой
+    if ((Temp_Str[0] == 0) || (Temp_Str[0] == ',') || (Temp_Str[0] == '.') ||
+        (Temp_Str[Temp_Str.length() - 1] == ',') || (Temp_Str[Temp_Str.length() - 1] == '.')) {
+        //Завершение программы с ошибкой
+        cout << "Input data is incorrect!";
+        exit(1);
+    }
+
+    //Цикл провреки корректности записи вещественного числа
+    for (int i = 0; i < Temp_Str.length(); i++) {
+        if ((Alph_num.find(Temp_Str[i]) == -1) && (Temp_Str[i] != ',') && (Temp_Str[i] != '.')) {
+            //Завершение программы с ошибкой
+            cout << "Input data is incorrect!";
+            exit(1);
+        }
+
+        if ((Temp_Str[i] == ',') || (Temp_Str[i] == '.')) {
+            if ((Temp_Str[i - 1] == ',') || (Temp_Str[i - 1] == '.') ||
+                (Temp_Str[i + 1] == ',') || (Temp_Str[i + 1] == '.')) {
+                //Завершение программы с ошибкой
+                cout << "Input data is incorrect!";
+                exit(1);
+            }
+        }
+    }
+
+    T->Fuel = strtod(Temp_Str.c_str(), NULL);
 
     return T;
 }
@@ -208,9 +300,94 @@ double Load_to_capacity_ratio_Truck(Truck* T) {
 Bus* In_Bus(ifstream& ifst) {
     Bus* B = new Bus();
 
-    ifst >> B->Motor_power;
-    ifst >> B->Passenger_cap;
-    ifst >> B->Fuel;
+    string Temp_Str = "";
+    string Alph_num = "0123456789";
+
+    getline(ifst, Temp_Str);
+
+    if (Temp_Str == "") { //Если строка пустая
+        //Завершение программы с ошибкой
+        cout << "Input data is incomplete!";
+        exit(1);
+    }
+
+    if (Temp_Str[0] == '0') { //Если число начинается с 0
+        //Завершение программы с ошибкой
+        cout << "Input data is incorrect!";
+        exit(1);
+    }
+
+    //Цикл проверки того, что строка содержит только цифры
+    for (int i = 0; i < Temp_Str.length(); i++) {
+        if (Alph_num.find(Temp_Str[i]) == -1) {
+            //Завершение программы с ошибкой
+            cout << "Input data is incorrect!";
+            exit(1);
+        }
+    }
+
+    B->Motor_power = atoi(Temp_Str.c_str());
+
+    getline(ifst, Temp_Str);
+
+    if (Temp_Str == "") { //Если строка пустая
+        //Завершение программы с ошибкой
+        cout << "Input data is incomplete!";
+        exit(1);
+    }
+
+    if (Temp_Str[0] == '0') { //Если число начинается с 0
+        //Завершение программы с ошибкой
+        cout << "Input data is incorrect!";
+        exit(1);
+    }
+
+    //Цикл проверки того, что строка содержит только цифры
+    for (int i = 0; i < Temp_Str.length(); i++) {
+        if (Alph_num.find(Temp_Str[i]) == -1) {
+            //Завершение программы с ошибкой
+            cout << "Input data is incorrect!";
+            exit(1);
+        }
+    }
+
+    B->Passenger_cap = atoi(Temp_Str.c_str());
+
+    getline(ifst, Temp_Str);
+
+    if (Temp_Str == "") { //Если строка пустая
+        //Завершение программы с ошибкой
+        cout << "Input data is incomplete!";
+        exit(1);
+    }
+
+    //Проверка того, что строка не начианется с 0, точки или запятой, а также не заканчивается точкой или запятой
+    if ((Temp_Str[0] == 0) || (Temp_Str[0] == ',') || (Temp_Str[0] == '.') ||
+        (Temp_Str[Temp_Str.length() - 1] == ',') || (Temp_Str[Temp_Str.length() - 1] == '.')) {
+        //Завершение программы с ошибкой
+        cout << "Input data is incorrect!";
+        exit(1);
+    }
+
+    //Цикл провреки корректности записи вещественного числа
+    for (int i = 0; i < Temp_Str.length(); i++) {
+        if ((Alph_num.find(Temp_Str[i]) == -1) && (Temp_Str[i] != ',') && (Temp_Str[i] != '.')) {
+            //Завершение программы с ошибкой
+            cout << "Input data is incorrect!";
+            exit(1);
+        }
+
+        if ((Temp_Str[i] == ',') || (Temp_Str[i] == '.')) {
+            if ((Temp_Str[i - 1] == ',') || (Temp_Str[i - 1] == '.') ||
+                (Temp_Str[i + 1] == ',') || (Temp_Str[i + 1] == '.')) {
+                //Завершение программы с ошибкой
+                cout << "Input data is incorrect!";
+                exit(1);
+            }
+        }
+    }
+
+    B->Fuel = strtod(Temp_Str.c_str(), NULL);
 
     return B;
 }
@@ -228,9 +405,94 @@ double Load_to_capacity_ratio_Bus(Bus* B) {
 Passenger_car* In_Passenger_car(ifstream& ifst) {
     Passenger_car* P_c = new Passenger_car();
 
-    ifst >> P_c->Motor_power;
-    ifst >> P_c->Max_speed;
-    ifst >> P_c->Fuel;
+    string Temp_Str = "";
+    string Alph_num = "0123456789";
+
+    getline(ifst, Temp_Str);
+
+    if (Temp_Str == "") { //Если строка пустая
+        //Завершение программы с ошибкой
+        cout << "Input data is incomplete!";
+        exit(1);
+    }
+
+    if (Temp_Str[0] == '0') { //Если число начинается с 0
+        //Завершение программы с ошибкой
+        cout << "Input data is incorrect!";
+        exit(1);
+    }
+
+    //Цикл проверки того, что строка содержит только цифры
+    for (int i = 0; i < Temp_Str.length(); i++) {
+        if (Alph_num.find(Temp_Str[i]) == -1) {
+            //Завершение программы с ошибкой
+            cout << "Input data is incorrect!";
+            exit(1);
+        }
+    }
+
+    P_c->Motor_power = atoi(Temp_Str.c_str());
+
+    getline(ifst, Temp_Str);
+
+    if (Temp_Str == "") { //Если строка пустая
+        //Завершение программы с ошибкой
+        cout << "Input data is incomplete!";
+        exit(1);
+    }
+
+    if (Temp_Str[0] == '0') { //Если число начинается с 0
+        //Завершение программы с ошибкой
+        cout << "Input data is incorrect!";
+        exit(1);
+    }
+
+    //Цикл проверки того, что строка содержит только цифры
+    for (int i = 0; i < Temp_Str.length(); i++) {
+        if (Alph_num.find(Temp_Str[i]) == -1) {
+            //Завершение программы с ошибкой
+            cout << "Input data is incorrect!";
+            exit(1);
+        }
+    }
+
+    P_c->Max_speed = atoi(Temp_Str.c_str());
+
+    getline(ifst, Temp_Str);
+
+    if (Temp_Str == "") { //Если строка пустая
+        //Завершение программы с ошибкой
+        cout << "Input data is incomplete!";
+        exit(1);
+    }
+
+    //Проверка того, что строка не начианется с 0, точки или запятой, а также не заканчивается точкой или запятой
+    if ((Temp_Str[0] == 0) || (Temp_Str[0] == ',') || (Temp_Str[0] == '.') ||
+        (Temp_Str[Temp_Str.length() - 1] == ',') || (Temp_Str[Temp_Str.length() - 1] == '.')) {
+        //Завершение программы с ошибкой
+        cout << "Input data is incorrect!";
+        exit(1);
+    }
+
+    //Цикл провреки корректности записи вещественного числа
+    for (int i = 0; i < Temp_Str.length(); i++) {
+        if ((Alph_num.find(Temp_Str[i]) == -1) && (Temp_Str[i] != ',') && (Temp_Str[i] != '.')) {
+            //Завершение программы с ошибкой
+            cout << "Input data is incorrect!";
+            exit(1);
+        }
+
+        if ((Temp_Str[i] == ',') || (Temp_Str[i] == '.')) {
+            if ((Temp_Str[i - 1] == ',') || (Temp_Str[i - 1] == '.') ||
+                (Temp_Str[i + 1] == ',') || (Temp_Str[i + 1] == '.')) {
+                //Завершение программы с ошибкой
+                cout << "Input data is incorrect!";
+                exit(1);
+            }
+        }
+    }
+
+    P_c->Fuel = strtod(Temp_Str.c_str(), NULL);
 
     return P_c;
 }
