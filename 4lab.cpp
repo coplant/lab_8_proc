@@ -1,4 +1,8 @@
-﻿#include "Header.h"
+﻿#include <iostream>
+
+#include "Header.h"
+
+using namespace std;
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -9,30 +13,33 @@ int main(int argc, char* argv[]) {
     }
 
     ifstream ifst(argv[1]);
+
     ofstream ofst(argv[2]);
 
     cout << "Start" << endl;
 
-    Container C; //Объявление контейнера
+    Container* Head = new Container(); //Создаем "голову" контейнера
+    Container* Tail = new Container(); //Создаем "хвост" контейнера
 
-    C.In(ifst); //Ввод элементов контейнера
+    Init_Container(Head, Tail); //Инициализируем контейнер
 
-    C.Sort(); //Сортировка контейнера
+    In_Container(Head, Tail, ifst); //Записываем элементы в контейнер
 
     ofst << "Filled and sorted container. " << endl;
 
-    C.Out(ofst); //Вывод контейнера
+    Sort(Head); //Сортировка контейнера
 
-    C.Out_Only_Truck(ofst); //Вывод только грузовиков
+    Out_Container(Head, ofst); //Вывод контейнера
 
-    C.Clear(); //Очистка контейнера
+    Out_Only_Truck(Head, ofst); //Вывод только грузовиков
+
+    Clear_Container(Head, Tail); //Очистка контейнера
 
     ofst << "Empty container. " << endl;
 
-    C.Out(ofst); //Вывод контейнера
+    Out_Container(Head, ofst); //Вывод контейнера
 
     cout << "Stop" << endl;
-
     system("pause");
     return 0;
 }
