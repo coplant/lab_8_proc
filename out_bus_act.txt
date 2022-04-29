@@ -1,0 +1,3 @@
+It's a Bus with motor power = 110
+Its passenger capacity is 54
+Its fuel is 27.8

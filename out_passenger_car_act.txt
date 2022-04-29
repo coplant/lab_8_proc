@@ -1,0 +1,3 @@
+It's a Passenger car with motor power = 135
+Its Max speed is 330
+Its fuel is 17.6
