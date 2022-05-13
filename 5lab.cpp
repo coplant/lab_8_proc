@@ -1,7 +1,5 @@
 ﻿#include <iostream>
-
 #include "Header.h"
-
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -13,7 +11,6 @@ int main(int argc, char* argv[]) {
     }
 
     ifstream ifst(argv[1]);
-
     if (!ifst.is_open()) {
         cout << "No input file found or could not open!" << endl;
         system("pause");
@@ -21,7 +18,6 @@ int main(int argc, char* argv[]) {
     }
 
     ofstream ofst(argv[2]);
-
     if (!ofst.is_open()) {
         cout << "No output file found or could not open!" << endl;
         system("pause");
@@ -29,27 +25,19 @@ int main(int argc, char* argv[]) {
     }
 
     cout << "Start" << endl;
-
-    Container* Head = new Container(); //Создаем "голову" контейнера
-    Container* Tail = new Container(); //Создаем "хвост" контейнера
-
-    Init_Container(Head, Tail); //Инициализируем контейнер
-
-    In_Container(Head, Tail, ifst); //Записываем элементы в контейнер
+    Container* Head = new Container();
+    Container* Tail = new Container();
+    Init_Container(Head, Tail);
+    In_Container(Head, Tail, ifst);
 
     ofst << "Filled and sorted container. " << endl;
-
-    Sort(Head); //Сортировка контейнера
-
-    Out_Container(Head, ofst); //Вывод контейнера
-
-    Out_Only_Truck(Head, ofst); //Вывод только грузовиков
-
-    Clear_Container(Head, Tail); //Очистка контейнера
+    Sort(Head);
+    Out_Container(Head, ofst);
+    Out_Only_Truck(Head, ofst);
+    Clear_Container(Head, Tail);
 
     ofst << "Empty container. " << endl;
-
-    Out_Container(Head, ofst); //Вывод контейнера
+    Out_Container(Head, ofst);
 
     cout << "Stop" << endl;
     system("pause");
